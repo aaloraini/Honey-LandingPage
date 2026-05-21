@@ -17,6 +17,8 @@ export interface HoneyVariant {
   };
 }
 
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
 export const variants: HoneyVariant[] = [
   {
     id: "flowers",
@@ -27,7 +29,7 @@ export const variants: HoneyVariant[] = [
       "Not just honey, but nature's most pristine masterpiece. Foraged from the deep Russian wilderness and completely untouched, this 250g jar brings the pure essence of luxury directly to your table.",
     price: "300 AED",
     weight: "250g",
-    imagePath: "/images/jar-flowers.png",
+    imagePath: `${base}/images/jar-flowers.png`,
     imagePlaceholderColor: "#F4C842",
     colors: {
       background: "#FDF6E3",
@@ -46,7 +48,7 @@ export const variants: HoneyVariant[] = [
       "Not just honey, but nature's most pristine masterpiece. Foraged from the deep Russian wilderness and completely untouched, this 250g jar brings the pure essence of luxury directly to your table.",
     price: "300 AED",
     weight: "250g",
-    imagePath: "/images/jar-forest.png",
+    imagePath: `${base}/images/jar-forest.png`,
     imagePlaceholderColor: "#7B4F2E",
     colors: {
       background: "#1C2B1F",
