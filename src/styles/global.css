@@ -25,6 +25,7 @@
   --text-muted-b: 68;
   --shadow-color: rgba(200, 134, 10, 0.25);
   --header-fg: #1A120B;
+  --logo-filter: none;
 }
 
 *,
@@ -276,107 +277,96 @@ body.page-products {
 /* ── Mobile layout (≤768px) ───────────────────────────────────────────────── */
 @media (max-width: 768px) {
 
-  /* Switch hero from 3-col grid → single-column flex */
+  /*
+   * Mobile CSS Grid — 3 rows:
+   *   "headline" — top, auto
+   *   "jar"      — middle, 1fr (jar + overlaid variant bubble)
+   *   "bottom"   — full-width CTA + description
+   */
   #hero-grid {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+    grid-template-areas:
+      "headline"
+      "jar"
+      "bottom";
     height: 100dvh;
     padding: 64px 0 0;
-    gap: 0;
-    position: relative;
     overflow: hidden;
   }
 
-  /* Left column — headline only at top */
+  /* ── Headline ── */
   #col-left {
-    order: 1;
+    grid-area: headline;
     align-items: center;
     text-align: center;
     padding: 24px 6vw 0;
-    gap: 16px;
-    flex-shrink: 0;
-  }
-
-  /* Mobile bottom strip — CTA + description, sits below jar, above price */
-  #mobile-bottom {
-    order: 3;
+    gap: 12px;
   }
 
   .text-headline {
-    font-size: clamp(2rem, 8vw, 2.8rem);
+    font-size: clamp(1.9rem, 7.5vw, 2.6rem);
     line-height: 1.1;
   }
 
-  .text-body {
-    font-size: 0.875rem;
-    max-width: 80vw;
-    display: none;   /* hide on mobile — shown at bottom */
-  }
+  .text-body { display: none; }
+  #cta-btn   { display: none; }
 
-  #cta-btn {
-    display: none; /* moved to bottom strip */
-  }
-
-  /* Center column — jar takes the bulk of the screen */
+  /* ── Jar section — col-center fills it, col-right overlays top-right ── */
   #col-center {
-    order: 2;
-    flex: 1;
+    grid-area: jar;
     position: relative;
   }
 
   .jar-wrapper {
-    width: min(72vw, 320px);
+    width: min(55vw, 230px);
   }
 
-  /* Right column — price + variant bubble, pinned at bottom */
-  #col-right {
-    order: 4;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 6vw 20px;
-    gap: 12px;
-    flex-shrink: 0;
-    border-top: 1px solid rgba(128, 128, 128, 0.12);
-  }
-
-  .price-block {
-    align-items: flex-start;
-    gap: 2px;
-  }
-
-  .text-weight-label {
-    font-size: 0.65rem;
-  }
-
-  .text-price {
-    font-size: clamp(1.4rem, 5vw, 1.8rem);
-  }
-
-  .text-per-jar {
-    font-size: 0.65rem;
-  }
-
-  .variant-label {
-    padding: 6px 14px;
-    font-size: 0.65rem;
-  }
-
-  /* Mobile description + CTA — injected below the grid via ::after trick;
-     instead, we show them via a separate mobile-only block we'll add via HTML */
-
-  /* Origin note — hide on mobile to reduce clutter */
-  .origin-note {
-    display: none;
-  }
-
-  /* Jar shadow — adjust for mobile */
   #jar-shadow {
     bottom: -4%;
     width: 50%;
     height: 8%;
   }
 
-  /* Peek jar position on mobile — smaller, still bottom-right */
-  /* (GSAP values are overridden via JS for mobile) */
+  /* col-right overlays the jar grid area — only variant bubble shown at top-left */
+  #col-right {
+    grid-area: jar;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 14px 0 0 5vw;
+    pointer-events: none;
+    gap: 0;
+    align-self: stretch;
+    z-index: 2;
+  }
+
+  /* Hide price, per-jar, origin — show only the variant bubble */
+  #col-right .price-block,
+  #col-right .text-per-jar,
+  #col-right .origin-note {
+    display: none;
+  }
+
+  #col-right .variant-label {
+    pointer-events: all;
+    padding: 6px 14px;
+    font-size: 0.65rem;
+  }
+
+  /* ── Bottom — full-width CTA + description ── */
+  #mobile-bottom {
+    grid-area: bottom;
+    display: flex !important;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 12px 6vw 20px;
+    gap: 8px;
+    border-top: 1px solid rgba(128, 128, 128, 0.12);
+  }
+
+  .origin-note { display: none; }
 }

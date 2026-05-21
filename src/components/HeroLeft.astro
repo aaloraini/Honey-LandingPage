@@ -48,24 +48,16 @@ const headlineLines = variant.headline.split('\n');
   }
 
   @media (max-width: 768px) {
-    #mobile-bottom {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      padding: 16px 6vw 28px;
-      flex-shrink: 0;
-    }
-
     .mobile-cta {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 12px 24px;
+      padding: 10px 20px;
       border-radius: 9999px;
       background: rgb(var(--accent-color-r), var(--accent-color-g), var(--accent-color-b));
       color: #ffffff;
       font-family: "DM Sans", system-ui, sans-serif;
-      font-size: 0.8rem;
+      font-size: 0.72rem;
       font-weight: 500;
       letter-spacing: 0.1em;
       text-transform: uppercase;
@@ -76,11 +68,15 @@ const headlineLines = variant.headline.split('\n');
 
     .mobile-desc {
       font-family: "DM Sans", system-ui, sans-serif;
-      font-size: 0.8rem;
+      font-size: 0.72rem;
       font-weight: 300;
-      line-height: 1.7;
+      line-height: 1.5;
       color: rgb(var(--text-muted-r, 107), var(--text-muted-g, 87), var(--text-muted-b, 68));
-      max-width: 88vw;
+      width: 100%;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
   }
 </style>

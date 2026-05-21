@@ -16,8 +16,13 @@ const pages = [
 
 <header id="site-header" transition:name="site-header" transition:animate="none">
   <!-- Logo -->
-  <a href={`${base}/`} class="header-logo header-link" aria-label="Home">
-    <span class="logo-text">Siberian Gold</span>
+  <a href={`${base}/`} class="header-logo" aria-label="Home">
+    <img
+      src={`${import.meta.env.BASE_URL}images/logo.svg`}
+      alt="Siberian Gold"
+      class="logo-img"
+      height="32"
+    />
   </a>
 
   <!-- Pill navigation + dots indicator -->
@@ -72,14 +77,13 @@ const pages = [
     text-decoration: none;
   }
 
-  .logo-text {
-    font-family: "Cormorant Garamond", Georgia, serif;
-    font-size: 1.65rem;
-    font-weight: 400;
-    letter-spacing: 0.06em;
-    color: var(--header-fg);
-    transition: color 0.5s ease;
-    line-height: 1;
+  .logo-img {
+    height: 20px;
+    width: auto;
+    object-fit: contain;
+    display: block;
+    filter: var(--logo-filter, none);
+    transition: filter 0.5s ease;
   }
 
   .nav-wrapper {
@@ -96,8 +100,8 @@ const pages = [
       grid-template-columns: 1fr auto;
     }
 
-    .logo-text {
-      font-size: 1.25rem;
+    .logo-img {
+      height: 18px;
     }
 
     .nav-wrapper {

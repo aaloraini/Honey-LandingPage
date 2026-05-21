@@ -66,7 +66,7 @@ const path = Astro.url.pathname;
       const isMobile = () => window.innerWidth <= 768;
       // Peek position differs on mobile vs desktop
       const peekPos = () => isMobile()
-        ? { x: '30vw', y: '30vh', scale: 0.32 }
+        ? { x: '32vw', y: '22vh', scale: 0.2 }
         : { x: '42vw', y: '38vh', scale: 0.28 };
 
       let bgRgb = { ...hexToRgb(variants[0].colors.background) };
@@ -92,7 +92,9 @@ const path = Astro.url.pathname;
         root.style.setProperty('--text-muted-r', String(Math.round(mtRgb.r)));
         root.style.setProperty('--text-muted-g', String(Math.round(mtRgb.g)));
         root.style.setProperty('--text-muted-b', String(Math.round(mtRgb.b)));
-        root.style.setProperty('--header-fg', getLuminance(bgRgb.r, bgRgb.g, bgRgb.b) > 0.45 ? '#1A120B' : '#F0EBE1');
+        const isLight = getLuminance(bgRgb.r, bgRgb.g, bgRgb.b) > 0.45;
+        root.style.setProperty('--header-fg', isLight ? '#1A120B' : '#F0EBE1');
+        root.style.setProperty('--logo-filter', isLight ? 'none' : 'invert(1) brightness(2)');
       }
 
       // ── Init — re-runs every time products page is loaded via View Transitions
@@ -151,7 +153,10 @@ const path = Astro.url.pathname;
 
         tl.to(jarOut, { autoAlpha: 0, duration: 0.2, ease: 'power2.in' }, 0);
         const peek = peekPos();
-        tl.set(jarOut, { x: '70vw', y: '58vh', scale: 0.25 }, 0.21);
+        const teleport = isMobile()
+          ? { x: '55vw', y: '40vh', scale: 0.18 }
+          : { x: '70vw', y: '58vh', scale: 0.25 };
+        tl.set(jarOut, teleport, 0.21);
         tl.to(jarOut, { ...peek, autoAlpha: 1, ease: 'power2.out', duration: 0.5 }, 0.55);
 
         tl.to([headlineEl, descriptionEl], { autoAlpha: 0, y: -24, stagger: 0.04, ease: 'power2.in', duration: 0.22 }, 0.05);
