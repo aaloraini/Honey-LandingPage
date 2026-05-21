@@ -89,6 +89,27 @@ const pages = [
     gap: 5px;
   }
 
+  @media (max-width: 768px) {
+    #site-header {
+      height: 64px;
+      padding: 0 6vw;
+      grid-template-columns: 1fr auto;
+    }
+
+    .logo-text {
+      font-size: 1.25rem;
+    }
+
+    .nav-wrapper {
+      display: none;
+    }
+
+    .contact-btn {
+      padding: 8px 16px;
+      font-size: 0.7rem;
+    }
+  }
+
   #pill-nav {
     display: flex;
     align-items: center;

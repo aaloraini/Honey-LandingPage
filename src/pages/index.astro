@@ -57,10 +57,17 @@ const path = Astro.url.pathname;
       }
 
       // ── Module-level mutable state (persists across View Transition swaps) ─
-      let jars:          HTMLImageElement[] = [];
-      let headlineEl:    HTMLElement | null = null;
-      let descriptionEl: HTMLElement | null = null;
-      let variantNameEl: HTMLElement | null = null;
+      let jars:               HTMLImageElement[] = [];
+      let headlineEl:         HTMLElement | null = null;
+      let descriptionEl:      HTMLElement | null = null;
+      let mobileDescEl:       HTMLElement | null = null;
+      let variantNameEl:      HTMLElement | null = null;
+
+      const isMobile = () => window.innerWidth <= 768;
+      // Peek position differs on mobile vs desktop
+      const peekPos = () => isMobile()
+        ? { x: '30vw', y: '30vh', scale: 0.32 }
+        : { x: '42vw', y: '38vh', scale: 0.28 };
 
       let bgRgb = { ...hexToRgb(variants[0].colors.background) };
       let acRgb = { ...hexToRgb(variants[0].colors.accent) };
@@ -97,6 +104,7 @@ const path = Astro.url.pathname;
         jars          = Array.from(document.querySelectorAll<HTMLImageElement>('.jar-image'));
         headlineEl    = document.getElementById('hero-headline');
         descriptionEl = document.getElementById('hero-description');
+        mobileDescEl  = document.getElementById('hero-description-mobile');
         variantNameEl = document.getElementById('hero-variant-name');
 
         // Reset state to first variant
@@ -110,9 +118,10 @@ const path = Astro.url.pathname;
         mtRgb = { ...hexToRgb(variants[0].colors.textMuted) };
 
         // Place non-active jars at peek position
+        const peek = peekPos();
         jars.forEach((jar, i) => {
           if (i === 0) gsap.set(jar, { clearProps: 'all' });
-          else gsap.set(jar, { autoAlpha: 1, x: '42vw', y: '38vh', rotation: 0, scale: 0.28 });
+          else gsap.set(jar, { autoAlpha: 1, ...peek, rotation: 0 });
         });
 
         applyColors();
@@ -141,15 +150,17 @@ const path = Astro.url.pathname;
         tl.to(mtRgb, { r: mtTo.r, g: mtTo.g, b: mtTo.b, duration: 1, ease: 'none', onUpdate: applyColors }, 0);
 
         tl.to(jarOut, { autoAlpha: 0, duration: 0.2, ease: 'power2.in' }, 0);
+        const peek = peekPos();
         tl.set(jarOut, { x: '70vw', y: '58vh', scale: 0.25 }, 0.21);
-        tl.to(jarOut, { x: '42vw', y: '38vh', scale: 0.28, autoAlpha: 1, ease: 'power2.out', duration: 0.5 }, 0.55);
+        tl.to(jarOut, { ...peek, autoAlpha: 1, ease: 'power2.out', duration: 0.5 }, 0.55);
 
         tl.to([headlineEl, descriptionEl], { autoAlpha: 0, y: -24, stagger: 0.04, ease: 'power2.in', duration: 0.22 }, 0.05);
         tl.to(jarIn,  { autoAlpha: 1, x: 0, y: 0, rotation: 0, scale: 1, ease: 'power3.out', duration: 0.65 }, 0.15);
 
         tl.call(() => {
           headlineEl!.innerHTML         = to.headline.replace('\n', '<br>');
-          descriptionEl!.textContent    = to.description;
+          if (descriptionEl) descriptionEl.textContent = to.description;
+          if (mobileDescEl)  mobileDescEl.textContent  = to.description;
           variantNameEl!.textContent    = to.name;
         }, [], 0.62);
 

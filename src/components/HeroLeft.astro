@@ -30,3 +30,57 @@ const headlineLines = variant.headline.split('\n');
     </svg>
   </button>
 </div>
+
+<!-- Mobile-only bottom strip: CTA + description -->
+<div id="mobile-bottom">
+  <button class="mobile-cta" type="button">
+    Experience the Purity
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+  <p class="mobile-desc" id="hero-description-mobile">{variant.description}</p>
+</div>
+
+<style>
+  #mobile-bottom {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    #mobile-bottom {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding: 16px 6vw 28px;
+      flex-shrink: 0;
+    }
+
+    .mobile-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 9999px;
+      background: rgb(var(--accent-color-r), var(--accent-color-g), var(--accent-color-b));
+      color: #ffffff;
+      font-family: "DM Sans", system-ui, sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      width: fit-content;
+    }
+
+    .mobile-desc {
+      font-family: "DM Sans", system-ui, sans-serif;
+      font-size: 0.8rem;
+      font-weight: 300;
+      line-height: 1.7;
+      color: rgb(var(--text-muted-r, 107), var(--text-muted-g, 87), var(--text-muted-b, 68));
+      max-width: 88vw;
+    }
+  }
+</style>
