@@ -1,0 +1,26 @@
+---
+import type { HoneyVariant } from '../data/variants';
+import HeroLeft from './HeroLeft.astro';
+import HeroCenter from './HeroCenter.astro';
+import HeroRight from './HeroRight.astro';
+
+interface Props {
+  variants: HoneyVariant[];
+}
+
+const { variants } = Astro.props;
+const initial = variants[0];
+---
+
+<section
+  id="scroll-stage"
+  data-variant-count={variants.length}
+  aria-label="Product showcase"
+>
+  <div id="hero-grid">
+    <HeroLeft variant={initial} />
+    <HeroCenter variants={variants} />
+    <HeroRight variants={variants} initial={initial} />
+  </div>
+</section>
+

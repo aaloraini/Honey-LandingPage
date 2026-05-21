@@ -1,0 +1,240 @@
+@import "tailwindcss";
+
+@theme {
+  --font-family-display: "Cormorant Garamond", Georgia, serif;
+  --font-family-body: "DM Sans", system-ui, sans-serif;
+
+  --color-honey-amber: #C8860A;
+  --color-honey-sage: #A8C08A;
+  --color-parchment: #FDF6E3;
+  --color-forest-night: #1C2B1F;
+  --color-bark: #1A120B;
+  --color-bark-muted: #6B5744;
+}
+
+:root {
+  --current-bg: #FDF6E3;
+  --accent-color-r: 200;
+  --accent-color-g: 134;
+  --accent-color-b: 10;
+  --text-primary-r: 26;
+  --text-primary-g: 18;
+  --text-primary-b: 11;
+  --text-muted-r: 107;
+  --text-muted-g: 87;
+  --text-muted-b: 68;
+  --shadow-color: rgba(200, 134, 10, 0.25);
+  --header-fg: #1A120B;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: auto;
+  overflow: hidden;
+  height: 100%;
+}
+
+body {
+  background-color: var(--current-bg);
+  color: rgb(var(--text-primary-r), var(--text-primary-g), var(--text-primary-b));
+  font-family: var(--font-family-body, "DM Sans", system-ui, sans-serif);
+  overflow: hidden;
+  height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Jar container */
+.jar-wrapper {
+  position: relative;
+  width: min(28vw, 350px);
+  aspect-ratio: 4 / 5.25;
+  margin: 0 auto;
+}
+
+.jar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  position: absolute;
+  inset: 0;
+  will-change: transform, opacity;
+}
+
+/* Floating shadow ellipse */
+#jar-shadow {
+  position: absolute;
+  bottom: -6%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 10%;
+  border-radius: 50%;
+  background: var(--shadow-color);
+  filter: blur(12px);
+  will-change: opacity, background;
+}
+
+
+/* CTA button */
+#cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 32px;
+  border-radius: 9999px;
+  background: rgb(var(--accent-color-r), var(--accent-color-g), var(--accent-color-b));
+  color: #ffffff;
+  font-family: var(--font-family-body, "DM Sans", system-ui, sans-serif);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+#cta-btn:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+#cta-btn:hover .cta-arrow {
+  transform: translateX(3px);
+}
+
+.cta-arrow {
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+/* Header adaptive text color */
+.header-link,
+.header-icon {
+  color: var(--header-fg);
+  transition: color 0.3s ease, opacity 0.2s ease;
+}
+
+.header-link:hover {
+  opacity: 0.65;
+}
+
+/* Pill nav */
+#pill-nav {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(128, 128, 128, 0.22);
+  border-radius: 9999px;
+  padding: 10px 28px;
+}
+
+/* Scroll stage */
+#scroll-stage {
+  position: relative;
+  width: 100%;
+}
+
+/* Hero grid */
+#hero-grid {
+  display: grid;
+  grid-template-columns: 38fr 28fr 34fr;
+  height: 100vh;
+  align-items: center;
+  padding: 90px 5vw 4vw;
+  gap: 0;
+}
+
+/* Left column */
+#col-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 28px;
+  padding-right: 4vw;
+}
+
+/* Center column */
+#col-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* Right column */
+#col-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 32px;
+  padding-left: 4vw;
+}
+
+/* Typography helpers */
+.text-tagline {
+  font-family: var(--font-family-display, "Cormorant Garamond", Georgia, serif);
+  font-size: clamp(0.9rem, 1.2vw, 1.1rem);
+  font-weight: 300;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgb(var(--text-muted-r), var(--text-muted-g), var(--text-muted-b));
+}
+
+.text-headline {
+  font-family: var(--font-family-display, "Cormorant Garamond", Georgia, serif);
+  font-size: clamp(2.2rem, 3.6vw, 3.6rem);
+  font-weight: 300;
+  font-style: italic;
+  line-height: 1.12;
+  color: rgb(var(--text-primary-r), var(--text-primary-g), var(--text-primary-b));
+}
+
+.text-body {
+  font-family: var(--font-family-body, "DM Sans", system-ui, sans-serif);
+  font-size: clamp(0.9rem, 1.05vw, 1rem);
+  font-weight: 300;
+  line-height: 1.8;
+  color: rgb(var(--text-muted-r), var(--text-muted-g), var(--text-muted-b));
+  max-width: 38ch;
+}
+
+.text-price {
+  font-family: var(--font-family-display, "Cormorant Garamond", Georgia, serif);
+  font-size: clamp(2rem, 3vw, 2.8rem);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: rgb(var(--accent-color-r), var(--accent-color-g), var(--accent-color-b));
+}
+
+.text-weight-label {
+  font-family: var(--font-family-body, "DM Sans", system-ui, sans-serif);
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgb(var(--text-muted-r), var(--text-muted-g), var(--text-muted-b));
+}
+
+.text-per-jar {
+  font-family: var(--font-family-body, "DM Sans", system-ui, sans-serif);
+  font-size: 0.75rem;
+  font-weight: 300;
+  letter-spacing: 0.12em;
+  color: rgb(var(--text-muted-r), var(--text-muted-g), var(--text-muted-b));
+}
+
+/* Divider line */
+.luxury-divider {
+  width: 40px;
+  height: 1px;
+  background: rgb(var(--accent-color-r), var(--accent-color-g), var(--accent-color-b));
+  opacity: 0.5;
+}

@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 420" width="320" height="420" fill="none">
+  <defs>
+    <!-- Glass jar body gradient -->
+    <linearGradient id="jarGradF" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#E8C96A" stop-opacity="0.6"/>
+      <stop offset="18%" stop-color="#F4C842" stop-opacity="0.9"/>
+      <stop offset="50%" stop-color="#FADA6B" stop-opacity="1"/>
+      <stop offset="82%" stop-color="#F4C842" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#C8960A" stop-opacity="0.7"/>
+    </linearGradient>
+    <!-- Honey fill gradient -->
+    <linearGradient id="honeyFillF" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F9D84A"/>
+      <stop offset="60%" stop-color="#E8B820"/>
+      <stop offset="100%" stop-color="#C8860A"/>
+    </linearGradient>
+    <!-- Lid gradient -->
+    <linearGradient id="lidGradF" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#E8E0D0"/>
+      <stop offset="30%" stop-color="#D4C8B0"/>
+      <stop offset="70%" stop-color="#B8A890"/>
+      <stop offset="100%" stop-color="#9E8870"/>
+    </linearGradient>
+    <!-- Glass highlight -->
+    <linearGradient id="glassHighF" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="white" stop-opacity="0"/>
+      <stop offset="15%" stop-color="white" stop-opacity="0.35"/>
+      <stop offset="30%" stop-color="white" stop-opacity="0"/>
+      <stop offset="100%" stop-color="white" stop-opacity="0"/>
+    </linearGradient>
+    <!-- Label gradient -->
+    <linearGradient id="labelGradF" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFDF5" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#F5EDD5" stop-opacity="0.95"/>
+    </linearGradient>
+    <clipPath id="jarClipF">
+      <path d="M76,140 Q70,150 68,180 L60,340 Q58,370 160,372 Q262,370 260,340 L252,180 Q250,150 244,140 Z"/>
+    </clipPath>
+    <filter id="softGlow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Jar body outline / glass -->
+  <path d="M76,140 Q70,150 68,180 L60,340 Q58,370 160,372 Q262,370 260,340 L252,180 Q250,150 244,140 Z"
+        fill="url(#jarGradF)" stroke="#C8960A" stroke-width="1.5" stroke-opacity="0.4"/>
+
+  <!-- Honey fill inside jar (clipped) -->
+  <rect x="60" y="200" width="200" height="172" fill="url(#honeyFillF)" clip-path="url(#jarClipF)"/>
+
+  <!-- Honey surface ripple -->
+  <ellipse cx="160" cy="200" rx="94" ry="8" fill="#F9D84A" opacity="0.7" clip-path="url(#jarClipF)"/>
+  <path d="M80,200 Q120,192 160,198 Q200,204 240,198" stroke="#FADA6A" stroke-width="2" fill="none" opacity="0.5" clip-path="url(#jarClipF)"/>
+
+  <!-- Glass highlight stripe (left) -->
+  <rect x="60" y="140" width="200" height="232" rx="0" fill="url(#glassHighF)" clip-path="url(#jarClipF)"/>
+
+  <!-- Honey drip at top -->
+  <path d="M145,140 Q143,128 146,118 Q148,112 150,110 Q152,112 154,118 Q157,128 155,140"
+        fill="#E8B820" opacity="0.8"/>
+  <ellipse cx="150" cy="110" rx="4" ry="5" fill="#C8860A" opacity="0.9"/>
+
+  <!-- Label area -->
+  <rect x="90" y="222" width="140" height="110" rx="4" fill="url(#labelGradF)" stroke="#E0C878" stroke-width="0.8"/>
+
+  <!-- Label top decorative line -->
+  <line x1="104" y1="234" x2="216" y2="234" stroke="#C8860A" stroke-width="0.6" opacity="0.5"/>
+  <line x1="104" y1="322" x2="216" y2="322" stroke="#C8860A" stroke-width="0.6" opacity="0.5"/>
+
+  <!-- Small honeycomb hex motif -->
+  <g transform="translate(143,245)" opacity="0.25">
+    <polygon points="8,0 16,4 16,12 8,16 0,12 0,4" fill="none" stroke="#C8860A" stroke-width="0.8"/>
+    <polygon points="24,0 32,4 32,12 24,16 16,12 16,4" fill="none" stroke="#C8860A" stroke-width="0.8"/>
+  </g>
+
+  <!-- Brand name on label -->
+  <text x="160" y="272" text-anchor="middle" font-family="Georgia, serif" font-size="10" font-weight="400" letter-spacing="2.5" fill="#6B4A10" opacity="0.9">SIBERIAN GOLD</text>
+
+  <!-- Variant name -->
+  <text x="160" y="293" text-anchor="middle" font-family="Georgia, serif" font-size="9.5" font-weight="300" letter-spacing="2.5" fill="#8B6030" opacity="0.75">FLOWERS HONEY</text>
+
+  <!-- Weight -->
+  <text x="160" y="312" text-anchor="middle" font-family="Georgia, serif" font-size="8" font-weight="300" letter-spacing="2" fill="#9B7040" opacity="0.6">250g</text>
+
+  <!-- Neck of jar (below lid) -->
+  <path d="M112,90 Q108,100 106,115 L106,140 L214,140 L214,115 Q212,100 208,90 Z"
+        fill="#E8D098" stroke="#C8960A" stroke-width="1" stroke-opacity="0.3"/>
+  <rect x="106" y="130" width="108" height="10" fill="#D4BC80" opacity="0.5"/>
+
+  <!-- Lid -->
+  <rect x="98" y="68" width="124" height="26" rx="4" fill="url(#lidGradF)" stroke="#A09080" stroke-width="1"/>
+  <!-- Lid top ridge -->
+  <rect x="100" y="68" width="120" height="5" rx="2" fill="#E0D8C8" opacity="0.6"/>
+  <!-- Lid knurling lines -->
+  <line x1="110" y1="72" x2="110" y2="92" stroke="#A09080" stroke-width="0.5" opacity="0.4"/>
+  <line x1="125" y1="72" x2="125" y2="92" stroke="#A09080" stroke-width="0.5" opacity="0.4"/>
+  <line x1="140" y1="72" x2="140" y2="92" stroke="#A09080" stroke-width="0.5" opacity="0.4"/>
+  <line x1="155" y1="72" x2="155" y2="92" stroke="#A09080" stroke-width="0.5" opacity="0.4"/>
+  <line x1="170" y1="72" x2="170" y2="92" stroke="#A09080" stroke-width="0.5" opacity="0.4"/>
+  <line x1="185" y1="72" x2="185" y2="92" stroke="#A09080" stroke-width="0.5" opacity="0.4"/>
+  <line x1="200" y1="72" x2="200" y2="92" stroke="#A09080" stroke-width="0.5" opacity="0.4"/>
+  <line x1="210" y1="72" x2="210" y2="92" stroke="#A09080" stroke-width="0.5" opacity="0.4"/>
+
+  <!-- Lid highlight -->
+  <rect x="100" y="70" width="40" height="6" rx="1" fill="white" opacity="0.2"/>
+
+  <!-- Right edge shadow on jar -->
+  <path d="M244,140 Q250,150 252,180 L260,340 Q262,360 240,368"
+        stroke="#A07810" stroke-width="3" fill="none" opacity="0.18"/>
+
+  <!-- Bottom jar curve highlight -->
+  <ellipse cx="160" cy="370" rx="90" ry="4" fill="#F4D060" opacity="0.2"/>
+</svg>

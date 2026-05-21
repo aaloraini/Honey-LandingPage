@@ -1,0 +1,101 @@
+---
+// No props needed — header is purely presentational
+---
+
+<header id="site-header">
+  <!-- Logo -->
+  <a href="/" class="header-logo header-link" aria-label="Home">
+    <span class="logo-text">Siberian Gold</span>
+  </a>
+
+  <!-- Pill navigation (centered) -->
+  <nav id="pill-nav" aria-label="Main navigation">
+    <a href="#story" class="header-link nav-link">Story</a>
+    <span class="nav-divider" aria-hidden="true"></span>
+    <a href="#origin" class="header-link nav-link">Origin</a>
+  </nav>
+
+  <!-- Contact button (right, accent-adaptive) -->
+  <a href="#contact" class="contact-btn" aria-label="Contact us">Contact</a>
+
+</header>
+
+<style>
+  #site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    padding: 0 5vw;
+    height: 80px;
+  }
+
+  .header-logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+  }
+
+  .logo-text {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: 1.65rem;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    color: var(--header-fg);
+    transition: color 0.5s ease;
+    line-height: 1;
+  }
+
+  #pill-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    min-width: 300px;
+    padding: 11px 36px;
+  }
+
+  .nav-link {
+    text-decoration: none;
+    font-family: "DM Sans", system-ui, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 0 28px;
+  }
+
+  .nav-divider {
+    display: block;
+    width: 1px;
+    height: 14px;
+    background: currentColor;
+    opacity: 0.2;
+    flex-shrink: 0;
+  }
+
+  .contact-btn {
+    justify-self: end;
+    text-decoration: none;
+    font-family: "DM Sans", system-ui, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 10px 22px;
+    border-radius: 9999px;
+    background: rgb(var(--accent-color-r), var(--accent-color-g), var(--accent-color-b));
+    color: #ffffff;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  .contact-btn:hover {
+    opacity: 0.82;
+    transform: translateY(-1px);
+  }
+
+</style>

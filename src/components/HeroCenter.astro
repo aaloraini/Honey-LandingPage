@@ -1,0 +1,28 @@
+---
+import type { HoneyVariant } from '../data/variants';
+
+interface Props {
+  variants: HoneyVariant[];
+}
+
+const { variants } = Astro.props;
+---
+
+<div id="col-center">
+  <div class="jar-wrapper" id="jar-wrapper">
+    {variants.map((variant, index) => (
+      <img
+        src={variant.imagePath}
+        alt={`${variant.name} — 250g jar`}
+        class="jar-image"
+        data-variant={variant.id}
+        data-index={index}
+        width="320"
+        height="420"
+        loading={index === 0 ? 'eager' : 'lazy'}
+        fetchpriority={index === 0 ? 'high' : undefined}
+      />
+    ))}
+    <div id="jar-shadow" aria-hidden="true"></div>
+  </div>
+</div>

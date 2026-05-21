@@ -1,0 +1,170 @@
+---
+import Header from '../components/Header.astro';
+import ScrollStage from '../components/ScrollStage.astro';
+import '../styles/global.css';
+import { variants } from '../data/variants';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Siberian Gold — premium Russian honey. Harvested from untouched wildflower meadows and ancient Siberian forests. 300 AED per 250g jar." />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Siberian Gold — Premium Russian Honey" />
+    <meta property="og:description" content="Siberian Gold — Flowers & Forest honey. 100% raw, unfiltered. 300 AED per 250g jar." />
+    <meta property="og:type" content="website" />
+
+    <!-- Preconnect for Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Siberian Gold — Premium Russian Honey</title>
+  </head>
+
+  <body>
+    <Header />
+    <main>
+      <ScrollStage variants={variants} />
+    </main>
+
+    <script>
+      import { gsap } from 'gsap';
+      import { variants, VARIANT_COUNT } from '../data/variants';
+
+      // ── Utilities ──────────────────────────────────────────────────────────
+      function hexToRgb(hex: string) {
+        const n = parseInt(hex.replace('#', ''), 16);
+        return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+      }
+
+      function getLuminance(r: number, g: number, b: number) {
+        return (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+      }
+
+      // ── DOM refs ───────────────────────────────────────────────────────────
+      const jars = Array.from(document.querySelectorAll<HTMLImageElement>('.jar-image'));
+      const headlineEl  = document.getElementById('hero-headline')!;
+      const descriptionEl = document.getElementById('hero-description')!;
+      const variantNameEl = document.getElementById('hero-variant-name')!;
+
+      // ── Color proxies ──────────────────────────────────────────────────────
+      const bgRgb = { ...hexToRgb(variants[0].colors.background) };
+      const acRgb = { ...hexToRgb(variants[0].colors.accent) };
+      const txRgb = { ...hexToRgb(variants[0].colors.text) };
+      const mtRgb = { ...hexToRgb(variants[0].colors.textMuted) };
+
+      function applyColors() {
+        const r = document.documentElement;
+        r.style.setProperty('--current-bg', `rgb(${Math.round(bgRgb.r)},${Math.round(bgRgb.g)},${Math.round(bgRgb.b)})`);
+        r.style.setProperty('--accent-color-r', String(Math.round(acRgb.r)));
+        r.style.setProperty('--accent-color-g', String(Math.round(acRgb.g)));
+        r.style.setProperty('--accent-color-b', String(Math.round(acRgb.b)));
+        r.style.setProperty('--text-primary-r', String(Math.round(txRgb.r)));
+        r.style.setProperty('--text-primary-g', String(Math.round(txRgb.g)));
+        r.style.setProperty('--text-primary-b', String(Math.round(txRgb.b)));
+        r.style.setProperty('--text-muted-r', String(Math.round(mtRgb.r)));
+        r.style.setProperty('--text-muted-g', String(Math.round(mtRgb.g)));
+        r.style.setProperty('--text-muted-b', String(Math.round(mtRgb.b)));
+        r.style.setProperty('--header-fg', getLuminance(bgRgb.r, bgRgb.g, bgRgb.b) > 0.45 ? '#1A120B' : '#F0EBE1');
+      }
+
+      // ── Initial setup ──────────────────────────────────────────────────────
+      // Non-active jars sit at the peek position (bottom-right, small) as a visual cue
+      jars.forEach((jar, i) => {
+        if (i !== 0) gsap.set(jar, { autoAlpha: 1, x: '42vw', y: '38vh', rotation: 0, scale: 0.28 });
+      });
+      applyColors();
+
+      // ── State ──────────────────────────────────────────────────────────────
+      let currentIndex = 0;
+      let isAnimating  = false;
+
+      // ── Transition ─────────────────────────────────────────────────────────
+      function goTo(toIdx: number) {
+        if (isAnimating) return;
+        isAnimating = true;
+
+        const to     = variants[toIdx];
+        const jarOut = jars[currentIndex];
+        const jarIn  = jars[toIdx];
+        const bgTo   = hexToRgb(to.colors.background);
+        const acTo   = hexToRgb(to.colors.accent);
+        const txTo   = hexToRgb(to.colors.text);
+        const mtTo   = hexToRgb(to.colors.textMuted);
+
+        const tl = gsap.timeline({
+          onComplete() {
+            currentIndex = toIdx;
+            isAnimating  = false;
+          },
+        });
+
+        // Color cross-fade (full duration)
+        tl.to(bgRgb, { r: bgTo.r, g: bgTo.g, b: bgTo.b, duration: 1, ease: 'none', onUpdate: applyColors }, 0);
+        tl.to(acRgb, { r: acTo.r, g: acTo.g, b: acTo.b, duration: 1, ease: 'none', onUpdate: applyColors }, 0);
+        tl.to(txRgb, { r: txTo.r, g: txTo.g, b: txTo.b, duration: 1, ease: 'none', onUpdate: applyColors }, 0);
+        tl.to(mtRgb, { r: mtTo.r, g: mtTo.g, b: mtTo.b, duration: 1, ease: 'none', onUpdate: applyColors }, 0);
+
+        // Jar out — fade in place, then teleport off-screen while invisible
+        tl.to(jarOut, { autoAlpha: 0, duration: 0.2, ease: 'power2.in' }, 0);
+        tl.set(jarOut, { x: '70vw', y: '58vh', scale: 0.25 }, 0.21);
+
+        // Jar out scrolls in from bottom-right to peek spot — timed with main entry
+        tl.to(jarOut, { x: '42vw', y: '38vh', scale: 0.28, autoAlpha: 1, ease: 'power2.out', duration: 0.5 }, 0.55);
+
+        // Text out
+        tl.to([headlineEl, descriptionEl], { autoAlpha: 0, y: -24, stagger: 0.04, ease: 'power2.in', duration: 0.22 }, 0.05);
+
+        // Jar in — glides from peek position (bottom-right) to center
+        tl.to(jarIn, { autoAlpha: 1, x: 0, y: 0, rotation: 0, scale: 1, ease: 'power3.out', duration: 0.65 }, 0.15);
+
+        // Swap content while text is invisible, then reveal
+        tl.call(() => {
+          headlineEl.innerHTML  = to.headline.replace('\n', '<br>');
+          descriptionEl.textContent = to.description;
+          variantNameEl.textContent = to.name;
+        }, [], 0.62);
+
+        tl.to([headlineEl, descriptionEl], { autoAlpha: 1, y: 0, stagger: 0.05, ease: 'power2.out', duration: 0.32 }, 0.65);
+      }
+
+      // ── Input: wheel ───────────────────────────────────────────────────────
+      let wheelAccum = 0;
+
+      window.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        if (isAnimating) return;
+        wheelAccum += e.deltaY;
+        if (Math.abs(wheelAccum) >= 60) {
+          const dir = wheelAccum > 0 ? 1 : -1;
+          wheelAccum = 0;
+          goTo((currentIndex + dir + VARIANT_COUNT) % VARIANT_COUNT);
+        }
+      }, { passive: false });
+
+      // ── Input: touch ───────────────────────────────────────────────────────
+      let touchStartY = 0;
+
+      window.addEventListener('touchstart', (e) => {
+        touchStartY = e.touches[0].clientY;
+      }, { passive: true });
+
+      window.addEventListener('touchend', (e) => {
+        if (isAnimating) return;
+        const delta = touchStartY - e.changedTouches[0].clientY;
+        if (Math.abs(delta) > 40) {
+          goTo((currentIndex + (delta > 0 ? 1 : -1) + VARIANT_COUNT) % VARIANT_COUNT);
+        }
+      }, { passive: true });
+    </script>
+  </body>
+</html>

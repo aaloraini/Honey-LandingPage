@@ -1,0 +1,32 @@
+---
+import type { HoneyVariant } from '../data/variants';
+
+interface Props {
+  variant: HoneyVariant;
+}
+
+const { variant } = Astro.props;
+const headlineLines = variant.headline.split('\n');
+---
+
+<div id="col-left">
+  <h1 class="text-headline" data-field="headline" id="hero-headline">
+    {headlineLines.map((line, i) => (
+      <>
+        {line}
+        {i < headlineLines.length - 1 && <br />}
+      </>
+    ))}
+  </h1>
+
+  <p class="text-body" data-field="description" id="hero-description">
+    {variant.description}
+  </p>
+
+  <button id="cta-btn" type="button">
+    Experience the Purity
+    <svg class="cta-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+</div>
