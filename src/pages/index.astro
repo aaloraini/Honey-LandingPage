@@ -1,8 +1,10 @@
 ---
+import { ClientRouter, slide } from 'astro:transitions';
 import Header from '../components/Header.astro';
 import ScrollStage from '../components/ScrollStage.astro';
 import '../styles/global.css';
 import { variants } from '../data/variants';
+const path = Astro.url.pathname;
 ---
 
 <!doctype html>
@@ -28,11 +30,16 @@ import { variants } from '../data/variants';
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>Siberian Gold — Premium Russian Honey</title>
+    <ClientRouter />
   </head>
 
-  <body>
-    <Header />
-    <main>
+  <body class="page-products">
+    <Header path={path} />
+    <main
+      id="page-content"
+      transition:name="page-content"
+      transition:animate={slide({ duration: '0.4s', easing: 'cubic-bezier(0.4, 0, 0.2, 1)' })}
+    >
       <ScrollStage variants={variants} />
     </main>
 
@@ -45,52 +52,75 @@ import { variants } from '../data/variants';
         const n = parseInt(hex.replace('#', ''), 16);
         return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
       }
-
       function getLuminance(r: number, g: number, b: number) {
         return (0.299 * r + 0.587 * g + 0.114 * b) / 255;
       }
 
-      // ── DOM refs ───────────────────────────────────────────────────────────
-      const jars = Array.from(document.querySelectorAll<HTMLImageElement>('.jar-image'));
-      const headlineEl  = document.getElementById('hero-headline')!;
-      const descriptionEl = document.getElementById('hero-description')!;
-      const variantNameEl = document.getElementById('hero-variant-name')!;
+      // ── Module-level mutable state (persists across View Transition swaps) ─
+      let jars:          HTMLImageElement[] = [];
+      let headlineEl:    HTMLElement | null = null;
+      let descriptionEl: HTMLElement | null = null;
+      let variantNameEl: HTMLElement | null = null;
 
-      // ── Color proxies ──────────────────────────────────────────────────────
-      const bgRgb = { ...hexToRgb(variants[0].colors.background) };
-      const acRgb = { ...hexToRgb(variants[0].colors.accent) };
-      const txRgb = { ...hexToRgb(variants[0].colors.text) };
-      const mtRgb = { ...hexToRgb(variants[0].colors.textMuted) };
+      let bgRgb = { ...hexToRgb(variants[0].colors.background) };
+      let acRgb = { ...hexToRgb(variants[0].colors.accent) };
+      let txRgb = { ...hexToRgb(variants[0].colors.text) };
+      let mtRgb = { ...hexToRgb(variants[0].colors.textMuted) };
 
-      function applyColors() {
-        const r = document.documentElement;
-        r.style.setProperty('--current-bg', `rgb(${Math.round(bgRgb.r)},${Math.round(bgRgb.g)},${Math.round(bgRgb.b)})`);
-        r.style.setProperty('--accent-color-r', String(Math.round(acRgb.r)));
-        r.style.setProperty('--accent-color-g', String(Math.round(acRgb.g)));
-        r.style.setProperty('--accent-color-b', String(Math.round(acRgb.b)));
-        r.style.setProperty('--text-primary-r', String(Math.round(txRgb.r)));
-        r.style.setProperty('--text-primary-g', String(Math.round(txRgb.g)));
-        r.style.setProperty('--text-primary-b', String(Math.round(txRgb.b)));
-        r.style.setProperty('--text-muted-r', String(Math.round(mtRgb.r)));
-        r.style.setProperty('--text-muted-g', String(Math.round(mtRgb.g)));
-        r.style.setProperty('--text-muted-b', String(Math.round(mtRgb.b)));
-        r.style.setProperty('--header-fg', getLuminance(bgRgb.r, bgRgb.g, bgRgb.b) > 0.45 ? '#1A120B' : '#F0EBE1');
-      }
-
-      // ── Initial setup ──────────────────────────────────────────────────────
-      // Non-active jars sit at the peek position (bottom-right, small) as a visual cue
-      jars.forEach((jar, i) => {
-        if (i !== 0) gsap.set(jar, { autoAlpha: 1, x: '42vw', y: '38vh', rotation: 0, scale: 0.28 });
-      });
-      applyColors();
-
-      // ── State ──────────────────────────────────────────────────────────────
       let currentIndex = 0;
       let isAnimating  = false;
+      let wheelAccum   = 0;
+      let touchStartY  = 0;
 
-      // ── Transition ─────────────────────────────────────────────────────────
+      // ── Color writer ───────────────────────────────────────────────────────
+      function applyColors() {
+        const root = document.documentElement;
+        root.style.setProperty('--current-bg', `rgb(${Math.round(bgRgb.r)},${Math.round(bgRgb.g)},${Math.round(bgRgb.b)})`);
+        root.style.setProperty('--accent-color-r', String(Math.round(acRgb.r)));
+        root.style.setProperty('--accent-color-g', String(Math.round(acRgb.g)));
+        root.style.setProperty('--accent-color-b', String(Math.round(acRgb.b)));
+        root.style.setProperty('--text-primary-r', String(Math.round(txRgb.r)));
+        root.style.setProperty('--text-primary-g', String(Math.round(txRgb.g)));
+        root.style.setProperty('--text-primary-b', String(Math.round(txRgb.b)));
+        root.style.setProperty('--text-muted-r', String(Math.round(mtRgb.r)));
+        root.style.setProperty('--text-muted-g', String(Math.round(mtRgb.g)));
+        root.style.setProperty('--text-muted-b', String(Math.round(mtRgb.b)));
+        root.style.setProperty('--header-fg', getLuminance(bgRgb.r, bgRgb.g, bgRgb.b) > 0.45 ? '#1A120B' : '#F0EBE1');
+      }
+
+      // ── Init — re-runs every time products page is loaded via View Transitions
+      function init() {
+        // Kill any running GSAP tweens from a previous visit
+        gsap.killTweensOf('.jar-image');
+
+        // Re-acquire fresh DOM refs from the newly-swapped DOM
+        jars          = Array.from(document.querySelectorAll<HTMLImageElement>('.jar-image'));
+        headlineEl    = document.getElementById('hero-headline');
+        descriptionEl = document.getElementById('hero-description');
+        variantNameEl = document.getElementById('hero-variant-name');
+
+        // Reset state to first variant
+        currentIndex = 0;
+        isAnimating  = false;
+        wheelAccum   = 0;
+
+        bgRgb = { ...hexToRgb(variants[0].colors.background) };
+        acRgb = { ...hexToRgb(variants[0].colors.accent) };
+        txRgb = { ...hexToRgb(variants[0].colors.text) };
+        mtRgb = { ...hexToRgb(variants[0].colors.textMuted) };
+
+        // Place non-active jars at peek position
+        jars.forEach((jar, i) => {
+          if (i === 0) gsap.set(jar, { clearProps: 'all' });
+          else gsap.set(jar, { autoAlpha: 1, x: '42vw', y: '38vh', rotation: 0, scale: 0.28 });
+        });
+
+        applyColors();
+      }
+
+      // ── Variant transition ─────────────────────────────────────────────────
       function goTo(toIdx: number) {
-        if (isAnimating) return;
+        if (isAnimating || !headlineEl || !descriptionEl || !variantNameEl) return;
         isAnimating = true;
 
         const to     = variants[toIdx];
@@ -102,45 +132,33 @@ import { variants } from '../data/variants';
         const mtTo   = hexToRgb(to.colors.textMuted);
 
         const tl = gsap.timeline({
-          onComplete() {
-            currentIndex = toIdx;
-            isAnimating  = false;
-          },
+          onComplete() { currentIndex = toIdx; isAnimating = false; },
         });
 
-        // Color cross-fade (full duration)
         tl.to(bgRgb, { r: bgTo.r, g: bgTo.g, b: bgTo.b, duration: 1, ease: 'none', onUpdate: applyColors }, 0);
         tl.to(acRgb, { r: acTo.r, g: acTo.g, b: acTo.b, duration: 1, ease: 'none', onUpdate: applyColors }, 0);
         tl.to(txRgb, { r: txTo.r, g: txTo.g, b: txTo.b, duration: 1, ease: 'none', onUpdate: applyColors }, 0);
         tl.to(mtRgb, { r: mtTo.r, g: mtTo.g, b: mtTo.b, duration: 1, ease: 'none', onUpdate: applyColors }, 0);
 
-        // Jar out — fade in place, then teleport off-screen while invisible
         tl.to(jarOut, { autoAlpha: 0, duration: 0.2, ease: 'power2.in' }, 0);
         tl.set(jarOut, { x: '70vw', y: '58vh', scale: 0.25 }, 0.21);
-
-        // Jar out scrolls in from bottom-right to peek spot — timed with main entry
         tl.to(jarOut, { x: '42vw', y: '38vh', scale: 0.28, autoAlpha: 1, ease: 'power2.out', duration: 0.5 }, 0.55);
 
-        // Text out
         tl.to([headlineEl, descriptionEl], { autoAlpha: 0, y: -24, stagger: 0.04, ease: 'power2.in', duration: 0.22 }, 0.05);
+        tl.to(jarIn,  { autoAlpha: 1, x: 0, y: 0, rotation: 0, scale: 1, ease: 'power3.out', duration: 0.65 }, 0.15);
 
-        // Jar in — glides from peek position (bottom-right) to center
-        tl.to(jarIn, { autoAlpha: 1, x: 0, y: 0, rotation: 0, scale: 1, ease: 'power3.out', duration: 0.65 }, 0.15);
-
-        // Swap content while text is invisible, then reveal
         tl.call(() => {
-          headlineEl.innerHTML  = to.headline.replace('\n', '<br>');
-          descriptionEl.textContent = to.description;
-          variantNameEl.textContent = to.name;
+          headlineEl!.innerHTML         = to.headline.replace('\n', '<br>');
+          descriptionEl!.textContent    = to.description;
+          variantNameEl!.textContent    = to.name;
         }, [], 0.62);
 
         tl.to([headlineEl, descriptionEl], { autoAlpha: 1, y: 0, stagger: 0.05, ease: 'power2.out', duration: 0.32 }, 0.65);
       }
 
-      // ── Input: wheel ───────────────────────────────────────────────────────
-      let wheelAccum = 0;
-
+      // ── Input listeners (added once; closures reference the live module vars)
       window.addEventListener('wheel', (e) => {
+        if (window.location.pathname !== '/') return;
         e.preventDefault();
         if (isAnimating) return;
         wheelAccum += e.deltaY;
@@ -151,20 +169,51 @@ import { variants } from '../data/variants';
         }
       }, { passive: false });
 
-      // ── Input: touch ───────────────────────────────────────────────────────
-      let touchStartY = 0;
-
       window.addEventListener('touchstart', (e) => {
         touchStartY = e.touches[0].clientY;
       }, { passive: true });
 
       window.addEventListener('touchend', (e) => {
-        if (isAnimating) return;
+        if (window.location.pathname !== '/' || isAnimating) return;
         const delta = touchStartY - e.changedTouches[0].clientY;
         if (Math.abs(delta) > 40) {
           goTo((currentIndex + (delta > 0 ? 1 : -1) + VARIANT_COUNT) % VARIANT_COUNT);
         }
       }, { passive: true });
+
+      // ── Boot ───────────────────────────────────────────────────────────────
+      // Call immediately for first load (astro:page-load may fire after wheel events)
+      init();
+      // Re-init on every SPA return to the products page
+      document.addEventListener('astro:page-load', () => {
+        if (window.location.pathname === '/') init();
+      });
+    </script>
+
+    <script>
+      // Cross-page slide direction + nav dot updates
+      const PAGE_ORDER: Record<string, number> = { '/': 0, '/story': 1, '/origin': 2 };
+
+      document.addEventListener('astro:before-preparation', (e: Event) => {
+        const ev = e as any;
+        const currentIdx = PAGE_ORDER[window.location.pathname] ?? 0;
+        const destPath   = typeof ev.to === 'string' ? new URL(ev.to).pathname : ev.to.pathname;
+        const destIdx    = PAGE_ORDER[destPath] ?? 0;
+        ev.direction     = destIdx >= currentIdx ? 'forward' : 'back';
+      });
+
+      document.addEventListener('astro:page-load', () => {
+        const path = window.location.pathname;
+        document.querySelectorAll<HTMLAnchorElement>('.nav-link').forEach(link => {
+          const isActive = link.getAttribute('href') === path;
+          link.classList.toggle('nav-link--active', isActive);
+          if (isActive) link.setAttribute('aria-current', 'page');
+          else link.removeAttribute('aria-current');
+        });
+        document.querySelectorAll<HTMLSpanElement>('.nav-dot').forEach(dot => {
+          dot.classList.toggle('is-active', dot.dataset.page === path);
+        });
+      });
     </script>
   </body>
 </html>

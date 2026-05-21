@@ -37,18 +37,20 @@
 
 html {
   scroll-behavior: auto;
-  overflow: hidden;
-  height: 100%;
 }
 
 body {
   background-color: var(--current-bg);
   color: rgb(var(--text-primary-r), var(--text-primary-g), var(--text-primary-b));
   font-family: var(--font-family-body, "DM Sans", system-ui, sans-serif);
-  overflow: hidden;
-  height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Products page only — scroll locked so wheel events drive variant switching */
+body.page-products {
+  overflow: hidden;
+  height: 100vh;
 }
 
 /* Jar container */
@@ -237,4 +239,36 @@ body {
   height: 1px;
   background: rgb(var(--accent-color-r), var(--accent-color-g), var(--accent-color-b));
   opacity: 0.5;
+}
+
+/* Suppress view transition on the persistent header */
+::view-transition-old(site-header),
+::view-transition-new(site-header) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* Nav dots indicator */
+#nav-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.nav-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.2;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.nav-dot.is-active {
+  opacity: 1;
+  transform: scale(1.4);
+  background: rgb(var(--accent-color-r, 200), var(--accent-color-g, 134), var(--accent-color-b, 10));
 }

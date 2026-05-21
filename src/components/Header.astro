@@ -1,23 +1,53 @@
 ---
-// No props needed — header is purely presentational
+interface Props {
+  path?: string;
+}
+
+const { path = '/' } = Astro.props;
+
+const pages = [
+  { href: '/',       label: 'Products' },
+  { href: '/story',  label: 'Story'    },
+  { href: '/origin', label: 'Origin'   },
+];
 ---
 
-<header id="site-header">
+<header id="site-header" transition:name="site-header" transition:animate="none">
   <!-- Logo -->
   <a href="/" class="header-logo header-link" aria-label="Home">
     <span class="logo-text">Siberian Gold</span>
   </a>
 
-  <!-- Pill navigation (centered) -->
-  <nav id="pill-nav" aria-label="Main navigation">
-    <a href="#story" class="header-link nav-link">Story</a>
-    <span class="nav-divider" aria-hidden="true"></span>
-    <a href="#origin" class="header-link nav-link">Origin</a>
-  </nav>
+  <!-- Pill navigation + dots indicator -->
+  <div class="nav-wrapper">
+    <nav id="pill-nav" aria-label="Main navigation">
+      {pages.map((page, i) => (
+        <>
+          {i > 0 && <span class="nav-divider" aria-hidden="true"></span>}
+          <a
+            href={page.href}
+            class={`header-link nav-link${path === page.href ? ' nav-link--active' : ''}`}
+            aria-current={path === page.href ? 'page' : undefined}
+          >
+            {page.label}
+          </a>
+        </>
+      ))}
+    </nav>
 
-  <!-- Contact button (right, accent-adaptive) -->
+    <!-- Page position dots -->
+    <div id="nav-dots" aria-hidden="true">
+      {pages.map(page => (
+        <span
+          class={`nav-dot${path === page.href ? ' is-active' : ''}`}
+          data-page={page.href}
+        ></span>
+      ))}
+    </div>
+  </div>
+
+  <!-- Contact button -->
   <a href="#contact" class="contact-btn" aria-label="Contact us">Contact</a>
-
 </header>
 
 <style>
@@ -50,6 +80,13 @@
     line-height: 1;
   }
 
+  .nav-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+  }
+
   #pill-nav {
     display: flex;
     align-items: center;
@@ -67,6 +104,10 @@
     letter-spacing: 0.14em;
     text-transform: uppercase;
     padding: 0 28px;
+  }
+
+  .nav-link--active {
+    font-weight: 500;
   }
 
   .nav-divider {
@@ -97,5 +138,4 @@
     opacity: 0.82;
     transform: translateY(-1px);
   }
-
 </style>
